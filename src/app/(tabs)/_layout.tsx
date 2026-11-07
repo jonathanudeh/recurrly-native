@@ -2,8 +2,11 @@ import clsx from "clsx";
 import { Tabs } from "expo-router";
 import { Image, View } from "react-native";
 import { tabs } from "../../../constants/data";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   const TabIcon = ({ focused, icon }: TabIconProps) => {
     return (
       <View className="tabs-icon">
@@ -15,7 +18,16 @@ export default function TabLayout() {
   };
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          position: "absolute",
+          Math.max(insets.bottom)
+        },
+      }}
+    >
       {tabs.map((tab) => {
         return (
           <Tabs.Screen
