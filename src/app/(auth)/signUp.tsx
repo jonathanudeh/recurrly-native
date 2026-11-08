@@ -1,5 +1,6 @@
 import { useSignUp } from "@clerk/expo";
 import { router } from "expo-router";
+import { usePostHog } from "posthog-react-native";
 import { useRef, useState, type ComponentRef } from "react";
 import {
   ActivityIndicator,
@@ -11,6 +12,7 @@ import {
 import AuthField from "../../../components/AuthField";
 import AuthMessage from "../../../components/AuthMessage";
 import AuthScreen from "../../../components/AuthScreen";
+import { posthogLogger } from "../../../lib/posthog";
 import {
   getClerkErrorMessage,
   MIN_PASSWORD_LENGTH,
@@ -23,6 +25,7 @@ type SignUpStep = "details" | "verification";
 
 export default function SignUpScreen() {
   const { signUp, errors, fetchStatus } = useSignUp();
+  const posthog = usePostHog();
   const [step, setStep] = useState<SignUpStep>("details");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,7 +59,13 @@ export default function SignUpScreen() {
           "Your account is ready, but we couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    posthog?.capture("sign_up_completed");
+    posthogLogger.info("authentication completed", {
+      authentication_flow: "sign_up",
+    });
   }
 
   async function submitDetails() {
