@@ -1,5 +1,6 @@
 import { useSignIn } from "@clerk/expo";
 import { router } from "expo-router";
+import { usePostHog } from "posthog-react-native";
 import { useRef, useState, type ComponentRef } from "react";
 import {
   ActivityIndicator,
@@ -11,6 +12,7 @@ import {
 import AuthField from "../../../components/AuthField";
 import AuthMessage from "../../../components/AuthMessage";
 import AuthScreen from "../../../components/AuthScreen";
+import { posthogLogger } from "../../../lib/posthog";
 import {
   getClerkErrorCode,
   getClerkErrorMessage,
@@ -31,6 +33,7 @@ const INVALID_CREDENTIAL_CODES = [
 
 export default function SignInScreen() {
   const { signIn, errors, fetchStatus } = useSignIn();
+  const posthog = usePostHog();
   const [step, setStep] = useState<SignInStep>("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,7 +94,13 @@ export default function SignInScreen() {
           "We couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    posthog?.capture("sign_in_completed");
+    posthogLogger.info("authentication completed", {
+      authentication_flow: "sign_in",
+    });
   }
 
   async function sendSignInCode() {
@@ -390,6 +399,11 @@ export default function SignInScreen() {
         );
         return;
       }
+
+      posthog?.capture("password_reset_completed");
+      posthogLogger.info("authentication completed", {
+        authentication_flow: "password_reset",
+      });
 
       if (signIn.status === "complete") {
         await finalizeSignIn();

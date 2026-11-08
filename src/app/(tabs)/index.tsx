@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
+import { usePostHog } from "posthog-react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import ListHeading from "../../../components/ListHeading";
 import SubscriptionCard from "../../../components/SubscriptionCard";
@@ -19,6 +20,7 @@ import { formatCurrency } from "../../../lib/util";
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function Index() {
+  const posthog = usePostHog();
   const [expendedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -78,11 +80,19 @@ export default function Index() {
             <SubscriptionCard
               {...item}
               expanded={expendedSubscriptionId === item.id}
-              onPress={() =>
-                setExpandedSubscriptionId((currentId) =>
-                  currentId === item.id ? null : item.id,
-                )
-              }
+              onPress={() => {
+                const isExpanding = expendedSubscriptionId !== item.id;
+
+                setExpandedSubscriptionId(isExpanding ? item.id : null);
+
+                if (isExpanding) {
+                  posthog?.capture("subscription_card_expanded", {
+                    subscription_category: item.category ?? item.plan ?? null,
+                    subscription_status: item.status ?? null,
+                    billing_frequency: item.billing ?? null,
+                  });
+                }
+              }}
             />
           );
         }}
