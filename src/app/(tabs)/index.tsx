@@ -1,9 +1,13 @@
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { styled } from "nativewind";
+
+const SafeAreaView = styled(RNSafeAreaView);
 
 export default function Index() {
   return (
-    <View className="bg-background flex-1 items-center justify-center">
+    <SafeAreaView className="bg-background flex-1 p-5">
       <Text className="text-success text-xl font-bold">
         Welcome to Nativewind!
       </Text>
@@ -35,6 +39,6 @@ export default function Index() {
       >
         Claude max subscription
       </Link>
-    </View>
+    </SafeAreaView>
   );
 }
