@@ -7,6 +7,8 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   // load fonts
   const [fontsLoaded] = useFonts({

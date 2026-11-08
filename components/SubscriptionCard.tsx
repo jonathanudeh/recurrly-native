@@ -78,7 +78,7 @@ function SubscriptionCard({
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
-                    {value?.trim()}
+                    {value?.trim() ?? "Not provided"}
                   </Text>
                 </View>
               </View>
