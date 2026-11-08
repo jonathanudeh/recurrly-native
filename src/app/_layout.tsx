@@ -1,3 +1,5 @@
+import { ClerkProvider } from "@clerk/expo";
+import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
@@ -7,10 +9,21 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+function getPublishableKey(): string {
+  const key = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  if (!key) {
+    throw new Error(
+      "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY. Add the selected Clerk application's publishable key to your local environment.",
+    );
+  }
+  return key;
+}
+
+const publishableKey = getPublishableKey();
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // load fonts
   const [fontsLoaded] = useFonts({
     "sans-regular": require("../../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "sans-bold": require("../../assets/fonts/PlusJakartaSans-Bold.ttf"),
@@ -20,21 +33,17 @@ export default function RootLayout() {
     "sans-light": require("../../assets/fonts/PlusJakartaSans-Light.ttf"),
   });
 
-  // show splashscreen while fonts loads
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
-  // dont show app if fonts don't load
   // if (!fontsLoaded) return null;
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ClerkProvider>
   );
 }

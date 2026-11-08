@@ -238,20 +238,24 @@
     @apply flex-1;
   }
 
+  .auth-scroll-content {
+    @apply flex-grow;
+  }
+
   .auth-content {
-    @apply grow px-5 pt-8 pb-10;
+    @apply w-full max-w-[460px] grow self-center px-5 pt-4 pb-8;
   }
 
   .auth-brand-block {
-    @apply mt-2 items-center;
+    @apply mt-4 items-center;
   }
 
   .auth-logo-wrap {
-    @apply mb-7 flex-row items-center gap-3;
+    @apply mb-7 flex-row items-center justify-center gap-3;
   }
 
   .auth-logo-mark {
-    @apply bg-accent relative size-14 items-center justify-center rounded-2xl;
+    @apply bg-accent size-12 items-center justify-center rounded-xl;
   }
 
   .auth-logo-mark-text {
@@ -259,23 +263,23 @@
   }
 
   .auth-wordmark {
-    @apply font-sans-extrabold text-primary text-3xl;
+    @apply font-sans-bold text-primary text-xl;
   }
 
   .auth-wordmark-sub {
-    @apply font-sans-semibold text-muted-foreground -mt-1 text-xs tracking-[1px] uppercase;
+    @apply font-sans-semibold text-muted-foreground -mt-0.5 text-[10px] tracking-[1px] uppercase;
   }
 
   .auth-title {
-    @apply font-sans-bold text-primary text-3xl;
+    @apply font-sans-bold text-primary text-2xl;
   }
 
   .auth-subtitle {
-    @apply font-sans-medium text-muted-foreground mt-2 max-w-[320px] text-center text-base;
+    @apply font-sans-medium text-muted-foreground mt-1 max-w-[320px] text-center text-sm;
   }
 
   .auth-card {
-    @apply border-border bg-card mt-8 rounded-3xl border p-5;
+    @apply border-border bg-card mt-7 rounded-2xl border p-4;
   }
 
   .auth-form {
@@ -283,15 +287,19 @@
   }
 
   .auth-field {
-    @apply gap-2;
+    @apply gap-1.5;
   }
 
   .auth-label {
     @apply font-sans-semibold text-primary text-sm;
   }
 
+  .auth-input-wrap {
+    @apply border-border bg-background flex-row items-center rounded-xl border;
+  }
+
   .auth-input {
-    @apply border-border bg-background font-sans-medium text-primary rounded-2xl border px-4 py-4 text-base;
+    @apply font-sans-medium text-primary min-h-12 flex-1 px-3.5 py-3 text-sm;
   }
 
   .auth-input-error {
@@ -302,12 +310,20 @@
     @apply font-sans-medium text-destructive text-xs;
   }
 
+  .auth-password-toggle {
+    @apply min-h-11 items-center justify-center px-3;
+  }
+
+  .auth-password-toggle-text {
+    @apply font-sans-semibold text-accent text-xs;
+  }
+
   .auth-helper {
     @apply font-sans-medium text-muted-foreground text-sm;
   }
 
   .auth-button {
-    @apply bg-accent mt-1 items-center rounded-2xl py-4;
+    @apply bg-accent mt-1 min-h-12 items-center justify-center rounded-xl px-4 py-3;
   }
 
   .auth-button-disabled {
@@ -315,7 +331,7 @@
   }
 
   .auth-button-text {
-    @apply font-sans-bold text-primary text-base;
+    @apply font-sans-bold text-sm text-white;
   }
 
   .auth-secondary-button {
@@ -348,6 +364,74 @@
 
   .auth-link {
     @apply font-sans-bold text-accent text-sm;
+  }
+
+  .auth-forgot-link {
+    @apply self-end py-1;
+  }
+
+  .auth-message-error {
+    @apply border-destructive/20 bg-destructive/10 rounded-xl border p-3;
+  }
+
+  .auth-message-error-text {
+    @apply font-sans-medium text-destructive text-sm;
+  }
+
+  .auth-message-success {
+    @apply border-success/20 bg-success/10 rounded-xl border p-3;
+  }
+
+  .auth-message-success-text {
+    @apply font-sans-medium text-success text-sm;
+  }
+
+  .auth-trust-copy {
+    @apply font-sans-medium text-muted-foreground mt-6 text-center text-xs;
+  }
+
+  .auth-loading {
+    @apply flex-1 items-center justify-center gap-3;
+  }
+
+  .settings-screen {
+    @apply bg-background flex-1;
+  }
+
+  .settings-content {
+    @apply flex-1 px-5 pt-10;
+  }
+
+  .settings-title {
+    @apply font-sans-bold text-primary text-3xl;
+  }
+
+  .settings-subtitle {
+    @apply font-sans-medium text-muted-foreground mt-2 text-sm;
+  }
+
+  .settings-account-card {
+    @apply border-border bg-card mt-8 gap-4 rounded-2xl border p-4;
+  }
+
+  .settings-card-title {
+    @apply font-sans-semibold text-primary text-base;
+  }
+
+  .settings-sign-out {
+    @apply bg-accent min-h-12 items-center justify-center rounded-xl px-4 py-3;
+  }
+
+  .settings-sign-out-disabled {
+    @apply bg-accent/45;
+  }
+
+  .settings-sign-out-text {
+    @apply font-sans-bold text-sm text-white;
+  }
+
+  .settings-error {
+    @apply font-sans-medium text-destructive text-sm;
   }
 
   .modal-overlay {
