@@ -43,3 +43,18 @@ Clone the repository:
 ```bash
 git clone <https://github.com/jonathanudeh/recurrly.git>
 ```
+
+### Authentication
+
+The app uses custom Recurrly sign-in and sign-up screens backed by Clerk. To run authentication locally:
+
+1. In the selected Clerk application, enable the Native API and email/password sign-up and sign-in. Set sign-up verification to email verification code.
+2. Add the application's **publishable** key to your local `.env` file:
+
+   ```env
+   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+   ```
+
+3. Start the app with `npx expo start`.
+
+Never add a Clerk secret key to the mobile app or commit local environment files. The app stores session tokens with Expo SecureStore. Route guards control navigation in the client; any future API or private data service must independently verify Clerk session tokens on the server.
