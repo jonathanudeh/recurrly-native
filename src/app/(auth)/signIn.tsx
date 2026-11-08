@@ -19,6 +19,7 @@ import {
   validateEmail,
   validatePassword,
 } from "../../../lib/auth";
+import { posthog, posthogLogger } from "../../../lib/posthog";
 
 type SignInStep =
   "password" | "signInCode" | "resetEmail" | "resetCode" | "resetPassword";
@@ -91,7 +92,13 @@ export default function SignInScreen() {
           "We couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    posthog?.capture("user_signed_in");
+    posthogLogger?.info("authentication sign-in completed", {
+      auth_flow: "sign_in",
+    });
   }
 
   async function sendSignInCode() {
@@ -393,6 +400,7 @@ export default function SignInScreen() {
 
       if (signIn.status === "complete") {
         await finalizeSignIn();
+        posthog?.capture("password_reset_completed");
         return;
       }
 

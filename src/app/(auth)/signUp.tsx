@@ -18,6 +18,7 @@ import {
   validateEmail,
   validatePassword,
 } from "../../../lib/auth";
+import { posthog, posthogLogger } from "../../../lib/posthog";
 
 type SignUpStep = "details" | "verification";
 
@@ -56,7 +57,13 @@ export default function SignUpScreen() {
           "Your account is ready, but we couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    posthog?.capture("account_created");
+    posthogLogger?.info("authentication account creation completed", {
+      auth_flow: "sign_up",
+    });
   }
 
   async function submitDetails() {
