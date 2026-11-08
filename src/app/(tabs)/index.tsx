@@ -1,15 +1,16 @@
 import { Link } from "expo-router";
+import { styled } from "nativewind";
 import { Text } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import { styled } from "nativewind";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function Index() {
   return (
     <SafeAreaView className="bg-background flex-1 p-5">
-      <Text className="text-success text-xl font-bold">
-        Welcome to Nativewind!
+      <Text className="text-success font-sans-extrabold text-7xl">Home</Text>
+      <Text className="text-success text-7xl font-bold">
+        Welcome to Recurrly
       </Text>
       <Link
         href="/onboarding"
