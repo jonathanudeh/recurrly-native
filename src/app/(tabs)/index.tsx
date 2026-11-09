@@ -1,17 +1,18 @@
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import CreateSubscriptionModal from "../../../components/CreateSubscriptionModal";
 import ListHeading from "../../../components/ListHeading";
 import SubscriptionCard from "../../../components/SubscriptionCard";
 import UpcomingSubscriptionCard from "../../../components/UpcomingSubscriptionCard";
 import {
   HOME_BALANCE,
-  HOME_SUBSCRIPTIONS,
   HOME_USER,
   UPCOMING_SUBSCRIPTIONS,
 } from "../../../constants/data";
+import { useSubscriptions } from "../../../components/SubscriptionsContext";
 import { icons } from "../../../constants/icons";
 import images from "../../../constants/images";
 import { posthog } from "../../../lib/posthog";
@@ -20,6 +21,8 @@ import { formatCurrency } from "../../../lib/util";
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function Index() {
+  const { subscriptions, addSubscription } = useSubscriptions();
+  const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [expendedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -35,7 +38,14 @@ export default function Index() {
                 <Text className="home-user-name">{HOME_USER.name}</Text>
               </View>
 
-              <Image source={icons.add} className="home-add-icon" />
+              <Pressable
+                accessibilityLabel="Create subscription"
+                accessibilityRole="button"
+                className="home-add-icon"
+                onPress={() => setCreateModalVisible(true)}
+              >
+                <Image source={icons.add} className="size-full" />
+              </Pressable>
             </View>
 
             <View className="home-balance-card">
@@ -73,7 +83,7 @@ export default function Index() {
             <ListHeading title="All Subscriptions" />
           </>
         )}
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         renderItem={({ item }) => {
           return (
             <SubscriptionCard
@@ -83,7 +93,7 @@ export default function Index() {
                 const isExpanded = expendedSubscriptionId !== item.id;
                 posthog?.capture("subscription_details_toggled", {
                   is_expanded: isExpanded,
-                  subscription_status: item.status,
+                  subscription_status: item.status ?? "unknown",
                   billing_interval: item.billing.toLowerCase(),
                 });
                 setExpandedSubscriptionId(isExpanded ? item.id : null);
@@ -99,6 +109,11 @@ export default function Index() {
           <Text className="home-empty-state">No subscription yet</Text>
         }
         contentContainerClassName="pb-30"
+      />
+      <CreateSubscriptionModal
+        onClose={() => setCreateModalVisible(false)}
+        onCreate={addSubscription}
+        visible={isCreateModalVisible}
       />
     </SafeAreaView>
   );

@@ -110,6 +110,10 @@
     @apply font-sans-bold text-primary text-2xl;
   }
 
+  .subscription-count {
+    @apply font-sans-medium text-muted-foreground mb-2 text-sm;
+  }
+
   .list-action {
     @apply rounded-full border border-black/20 px-4 py-1;
   }
@@ -439,7 +443,7 @@
   }
 
   .modal-container {
-    @apply bg-background mt-auto max-h-[85%] rounded-t-3xl;
+    @apply bg-background mt-auto h-[85%] max-h-[90%] rounded-t-3xl;
   }
 
   .modal-header {
