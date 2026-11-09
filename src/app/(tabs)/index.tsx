@@ -14,6 +14,7 @@ import {
 } from "../../../constants/data";
 import { icons } from "../../../constants/icons";
 import images from "../../../constants/images";
+import { posthog } from "../../../lib/posthog";
 import { formatCurrency } from "../../../lib/util";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -78,11 +79,15 @@ export default function Index() {
             <SubscriptionCard
               {...item}
               expanded={expendedSubscriptionId === item.id}
-              onPress={() =>
-                setExpandedSubscriptionId((currentId) =>
-                  currentId === item.id ? null : item.id,
-                )
-              }
+              onPress={() => {
+                const isExpanded = expendedSubscriptionId !== item.id;
+                posthog?.capture("subscription_details_toggled", {
+                  is_expanded: isExpanded,
+                  subscription_status: item.status,
+                  billing_interval: item.billing.toLowerCase(),
+                });
+                setExpandedSubscriptionId(isExpanded ? item.id : null);
+              }}
             />
           );
         }}

@@ -11,6 +11,7 @@ import {
 import AuthField from "../../../components/AuthField";
 import AuthMessage from "../../../components/AuthMessage";
 import AuthScreen from "../../../components/AuthScreen";
+import { posthog, posthogLogger } from "../../../lib/posthog";
 import {
   getClerkErrorMessage,
   MIN_PASSWORD_LENGTH,
@@ -56,7 +57,11 @@ export default function SignUpScreen() {
           "Your account is ready, but we couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    posthog?.capture("account_created");
+    posthogLogger.info("account created", { event: "account_created" });
   }
 
   async function submitDetails() {
