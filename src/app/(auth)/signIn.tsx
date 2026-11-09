@@ -11,6 +11,7 @@ import {
 import AuthField from "../../../components/AuthField";
 import AuthMessage from "../../../components/AuthMessage";
 import AuthScreen from "../../../components/AuthScreen";
+import { posthog, posthogLogger } from "../../../lib/posthog";
 import {
   getClerkErrorCode,
   getClerkErrorMessage,
@@ -91,7 +92,23 @@ export default function SignInScreen() {
           "We couldn't finish signing you in. Please try again.",
         ),
       );
+      return;
     }
+
+    const authenticationMethod =
+      step === "signInCode"
+        ? "email_code"
+        : step === "resetPassword"
+          ? "password_reset"
+          : "email_password";
+
+    posthog?.capture("sign_in_completed", {
+      authentication_method: authenticationMethod,
+    });
+    posthogLogger.info("sign in completed", {
+      event: "sign_in_completed",
+      authentication_method: authenticationMethod,
+    });
   }
 
   async function sendSignInCode() {
@@ -392,6 +409,10 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
+        posthog?.capture("password_reset_completed");
+        posthogLogger.info("password reset completed", {
+          event: "password_reset_completed",
+        });
         await finalizeSignIn();
         return;
       }

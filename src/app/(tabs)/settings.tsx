@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
+import { posthog } from "../../../lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -17,6 +18,7 @@ function SettingsScreen() {
     setError(null);
 
     try {
+      posthog?.capture("sign_out_requested");
       await signOut();
       router.replace("/(auth)/signIn");
     } catch {
