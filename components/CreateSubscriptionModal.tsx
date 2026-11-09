@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { icons } from "../constants/icons";
+import { posthog } from "../lib/posthog";
 
 const CATEGORIES = [
   "Entertainment",
@@ -90,6 +91,8 @@ export default function CreateSubscriptionModal({
       color: CATEGORY_COLORS[category],
     });
 
+    posthog?.capture("subscription_created");
+
     setName("");
     setPrice("");
     setFrequency("Monthly");
@@ -112,7 +115,7 @@ export default function CreateSubscriptionModal({
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          className="w-full"
+          className="h-full w-full"
         >
           <View className="modal-container w-full">
             <View className="modal-header">
