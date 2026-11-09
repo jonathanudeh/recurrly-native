@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
+import { router } from "expo-router";
 import { styled } from "nativewind";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import CreateSubscriptionModal from "../../../components/CreateSubscriptionModal";
@@ -10,7 +11,6 @@ import UpcomingSubscriptionCard from "../../../components/UpcomingSubscriptionCa
 import {
   HOME_BALANCE,
   HOME_USER,
-  UPCOMING_SUBSCRIPTIONS,
 } from "../../../constants/data";
 import { useSubscriptions } from "../../../components/SubscriptionsContext";
 import { icons } from "../../../constants/icons";
@@ -20,12 +20,67 @@ import { formatCurrency } from "../../../lib/util";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+function getUpcomingSubscriptions(subscriptions: Subscription[]) {
+  const today = dayjs();
+
+  return subscriptions
+    .flatMap((subscription) => {
+      if (subscription.status?.toLowerCase() !== "active") return [];
+
+      const billingFrequency = (
+        subscription.frequency ?? subscription.billing
+      ).toLowerCase();
+      const interval =
+        billingFrequency === "monthly"
+          ? "month"
+          : billingFrequency === "yearly"
+            ? "year"
+            : null;
+      if (!interval) return [];
+
+      const renewalDate = subscription.renewalDate
+        ? dayjs(subscription.renewalDate)
+        : subscription.startDate
+          ? dayjs(subscription.startDate).add(1, interval)
+          : null;
+      if (!renewalDate?.isValid()) return [];
+
+      const nextRenewal =
+        renewalDate.isBefore(today)
+          ? renewalDate.add(
+              Math.floor(today.diff(renewalDate, interval)) + 1,
+              interval,
+            )
+          : renewalDate;
+      const daysLeft = Math.max(
+        0,
+        nextRenewal.startOf("day").diff(today.startOf("day"), "day"),
+      );
+
+      return [
+        {
+          ...subscription,
+          daysLeft,
+          nextRenewalTimestamp: nextRenewal.valueOf(),
+        },
+      ];
+    })
+    .sort(
+      (first, second) =>
+        first.nextRenewalTimestamp - second.nextRenewalTimestamp,
+    );
+}
+
 export default function Index() {
   const { subscriptions, addSubscription } = useSubscriptions();
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [expendedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
+  const upcomingSubscriptions = useMemo(
+    () => getUpcomingSubscriptions(subscriptions),
+    [subscriptions],
+  );
 
   return (
     <SafeAreaView className="bg-background flex-1 p-5">
@@ -62,10 +117,13 @@ export default function Index() {
             </View>
 
             <View className="mb-5">
-              <ListHeading title="Upcoming" />
+              <ListHeading
+                onPress={() => router.push("/(tabs)/subscriptions")}
+                title="Upcoming"
+              />
 
               <FlatList
-                data={UPCOMING_SUBSCRIPTIONS}
+                data={upcomingSubscriptions}
                 renderItem={({ item }) => {
                   return <UpcomingSubscriptionCard {...item} />;
                 }}
@@ -80,7 +138,10 @@ export default function Index() {
               />
             </View>
 
-            <ListHeading title="All Subscriptions" />
+            <ListHeading
+              onPress={() => router.push("/(tabs)/subscriptions")}
+              title="All Subscriptions"
+            />
           </>
         )}
         data={subscriptions}
